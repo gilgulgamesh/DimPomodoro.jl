@@ -12,9 +12,6 @@ qml_file = "pomodoro.qml"
 resttime = 5*60
 bigresttime = 15*60
 gotime = 30*60
-gocolor = "#ffc135" 
-restcolor = "#a6e22d"
-bigrestcolor = "#ce8297"
 ncorner = 1
 margin = 10
 
@@ -29,6 +26,10 @@ red = "#fb4934"
 orange = "#fe8019"
 # opacity is in the qml
 
+gocolor = yellow # formely "#ffc135" 
+restcolor = teal # formely "#a6e22d"
+bigrestcolor = purple # formely "#ce8297"
+
 #corners! 
 left = margin
 right = 1920  - margin - 200
@@ -40,7 +41,7 @@ sw = (left, bottom)
 se = (right, bottom)
 corners = (nw, ne, se, sw)  # hard code your resolution above to be able to start anywhere that isn't (0, 0)
 
-const timestring = Observable("11:11:11")
+const timestring = Observable("didn't load")
 const visible = Observable(true)
 const x = Observable(left) # see below
 const y = Observable(top)
@@ -57,11 +58,6 @@ function tocorner!(n)
 	(x[], y[]) = corners[n] .+ (rand1, rand2)
 end
 
-on(paused) do p
-	if p 
-		visible[] = true
-	end
-end
 
 on(inrest) do inr
 	if inr
@@ -80,6 +76,7 @@ on(inrest) do inr
 		global ncorner
 		ncorner = ncorner %4 + 1 # looks odd, but after 1-indexing it's normal
 		tocorner!(ncorner)
+		visible[] = true
 		println("next pomo")
 	end
 	timestring[] = formattime(t[])
@@ -88,9 +85,9 @@ end
 
 #time!
 
-function formattime(timen) 
-	sec = timen % 60 
-	min =  timen ÷ 60  
+function formattime(n) 
+	sec = n % 60 
+	min =  n ÷ 60  
 	if min < 10
 		min = string(0, min)
 	end

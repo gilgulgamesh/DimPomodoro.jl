@@ -1,3 +1,8 @@
+name = "DimPomodoro"
+uuid = "aa074b97-b998-49b3-b862-ef931b03cec3" 
+version = "0.1.0"
+
+
 [deps]
 Observables = "510215fc-4207-5dde-b226-833fc4488ee2"
 QML = "2db162a6-7e43-52c3-8d84-290c1c42d82a"
