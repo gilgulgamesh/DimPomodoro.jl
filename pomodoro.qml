@@ -36,7 +36,7 @@ ApplicationWindow {
 
 
 	Text {
-		opacity: 0.85
+		opacity: 0.7
 		id:text
 		anchors.centerIn: parent
 		text: pomo.timestring

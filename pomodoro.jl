@@ -5,20 +5,8 @@ artifact_bin = joinpath(first(filter(d -> isdir(joinpath(d, "qml", "Qt", "labs",
 sep = Sys.iswindows() ? ";" : ":"
 ENV["PATH"] = artifact_bin * sep * ENV["PATH"]
 
-
 using QML
 using Observables	
-
-#vars
-qml_file = "pomodoro.qml"
-resttime = 5*60
-bigresttime = 15*60
-gotime = 30*60
-gocolor = "#ffc135" 
-restcolor = "#a6e22d"
-bigrestcolor = "#ce8297"
-ncorner = 1
-margin = 10
 
 gray = "#d0c8aa"
 yellow = "#fabd2f"
@@ -29,18 +17,31 @@ teal = "#8ec07c"
 white = "#e5debb"
 red = "#fb4934"
 orange = "#fe8019"
+
+#vars
+qml_file = "pomodoro.qml"
+resttime = 5*60
+bigresttime = 15*60
+gotime = 30*60
+gocolor = orange 
+restcolor = teal
+bigrestcolor = purple
+ncorner = 1
+margin = 10
+SCALING_FACTOR = 1 #set this to your ui scaling factor, or just play with it
 # opacity is in the qml
 
 #corners! 
 left = margin
 right = 1920  - margin - 200
 top = margin
-bottom = 1080  - margin - 200
+bottom = 1080  - margin - 100
 nw = (left, top)
 ne = (right, top)
 sw = (left, bottom)
 se = (right, bottom)
-corners = (ne, se, sw, nw)  # hard code your resolution above to be able to start anywhere that isn't (0, 0)
+k = SCALING_FACTOR
+corners = (ne.÷k, se.÷k, sw.÷k, nw.÷k) 
 
 const timestring = Observable("Br:Ok:En")
 const visible = Observable(true)

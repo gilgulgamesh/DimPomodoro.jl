@@ -21,18 +21,19 @@ Gruvbox themed, minimal, dark, and semi-opaque Pomodoro timer with oled-safety i
 - something smart `-__-`
 
 ## Installation
-As it runs on Julia + QML, it must be ran as source code. However, they make it easy.
-- "install julia"
-(tested on julia 1.12.6)
+On Windows:
+open the `install.bat`, then `launch.bat`
 
-enter the repl with:
-```julia```
+This installs Julia, then instantiates the project, and temporarily adds a specific qml library to path as a workaroud for a bug in the windows version of QML.jl
 
-in the REPL, enter pkg mode by typing:
-`]`
-
-then input:
-`add https://github.com/gilgulgamesh/dimpomodoro.jl`
+On other platforms (setup file incoming): 
+install Julia, then (from this folder) install with 
+```
+julia --project=. -e "using Pkg; Pkg.instantiate()"
+```
+then run with
+```julia --project. pomodoro.jl
+```
 
 ## Usage
 You can launch it from the included .bat file on windows, which really just runs `julia --project=.` in the installation folder. Or do `julia` then `using DimPomodo.jl`
@@ -47,3 +48,4 @@ You can see the effects live by setting `color[] = ...` instead, or `x[]...` and
 time is:
 `gotime = 15 * 60` for 15 minutes
 or `resttime`, `bigrestime`
+
