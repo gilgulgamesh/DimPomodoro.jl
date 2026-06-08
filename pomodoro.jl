@@ -1,3 +1,5 @@
+println("launching")
+
 artifact_bin = joinpath(first(filter(d -> isdir(joinpath(d, "qml", "Qt", "labs", "platform")), 
 	readdir(joinpath(first(Base.DEPOT_PATH), "artifacts"), join=true))), "bin")
 sep = Sys.iswindows() ? ";" : ":"
@@ -33,16 +35,16 @@ orange = "#fe8019"
 left = margin
 right = 1920  - margin - 200
 top = margin
-bottom = 1080  - margin - 100
+bottom = 1080  - margin - 200
 nw = (left, top)
 ne = (right, top)
 sw = (left, bottom)
 se = (right, bottom)
-corners = (nw, ne, se, sw)  # hard code your resolution above to be able to start anywhere that isn't (0, 0)
+corners = (ne, se, sw, nw)  # hard code your resolution above to be able to start anywhere that isn't (0, 0)
 
-const timestring = Observable("11:11:11")
+const timestring = Observable("Br:Ok:En")
 const visible = Observable(true)
-const x = Observable(left) # see below
+const x = Observable(right)
 const y = Observable(top)
 const t = Observable(gotime)
 const color = Observable(gocolor)
@@ -99,6 +101,9 @@ function formattime(timen)
 	end
 	string(min, ":", sec)
 end
+
+
+
 
 backtocorner() = tocorner!(ncorner)
 skip() = inrest[] = !inrest[]
