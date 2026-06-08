@@ -1,4 +1,4 @@
-#0 DimPomodoro
+# DimPomodoro
 Gruvbox themed, minimal, dark, and semi-opaque Pomodoro timer with oled-safety in mind.
 
 ## Features
