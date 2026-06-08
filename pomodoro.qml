@@ -36,7 +36,7 @@ ApplicationWindow {
 
 
 	Text {
-		opacity: 0.7
+		opacity: 0.8
 		id:text
 		anchors.centerIn: parent
 		text: pomo.timestring
@@ -52,7 +52,7 @@ ApplicationWindow {
 		SequentialAnimation on opacity {
 			id : animateFromBright
 			running : false
-			NumberAnimation { to:0.7; duration:100 }
+			NumberAnimation { to:0.8; duration:100 }
 		}
 		SequentialAnimation on opacity {
 			id : animateFromBrightPause
@@ -63,7 +63,7 @@ ApplicationWindow {
 		SequentialAnimation on opacity {
 			id : animateFromBrightPlay
 			running : false
-			NumberAnimation { to:0.7; duration:200 }
+			NumberAnimation { to:0.8; duration:200 }
 			PauseAnimation {duration: 200}
 		}
 
@@ -73,7 +73,7 @@ ApplicationWindow {
 			loops: Animation.Infinite
 			running : pomo.paused && !animateFromBrightPlay.running && !animateFromBrightPause.running
 			NumberAnimation {  to:0.2 ; duration:70}
-			NumberAnimation {  to:0.7 ; duration:2000}
+			NumberAnimation {  to:0.8 ; duration:2000}
 			NumberAnimation {  to:0.2 ; duration:2000}
 
 		}

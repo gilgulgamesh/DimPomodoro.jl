@@ -1,4 +1,4 @@
-# DimPomodoro
+#0 DimPomodoro
 Gruvbox themed, minimal, dark, and semi-opaque Pomodoro timer with oled-safety in mind.
 
 ## Features
@@ -21,12 +21,11 @@ Gruvbox themed, minimal, dark, and semi-opaque Pomodoro timer with oled-safety i
 - something smart `-__-`
 
 ## Installation
-On Windows:
-open the `install.bat`, then `launch.bat`
+### automatic
+There are `install` and `launch` scripts, just run them in order. 
+They do very little, just install julia and run the commends below. The `.jl` file temporarily adds a specific qml library to path as a workaroud for a bug in the windows version of QML.jl.
 
-This installs Julia, then instantiates the project, and temporarily adds a specific qml library to path as a workaroud for a bug in the windows version of QML.jl
-
-On other platforms (setup file incoming): 
+### manual
 install Julia, then (from this folder) install with 
 ```
 julia --project=. -e "using Pkg; Pkg.instantiate()"
