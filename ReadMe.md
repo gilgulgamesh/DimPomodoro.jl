@@ -7,7 +7,7 @@ Gruvbox themed, minimal, dark, and semi-opaque Pomodoro timer with oled-safety i
 - random shuffling
 
 ## um 
-- 1080p only for now, without scaling, unless you want to edit to add your screen dimensions
+- didn't do scaling automatically... you can change it in the file, add a resolution and your ui scaling factor, it's at 1x 1080p.
 
 ## Inputs
 - double click to skip
