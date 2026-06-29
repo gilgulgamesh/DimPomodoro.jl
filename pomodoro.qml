@@ -9,7 +9,7 @@ import Qt.labs.platform
 ApplicationWindow {
 	id: window
 	visible: pomo.visible
-	flags: Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint 
+	flags: Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint
 	color: "transparent"
 	width: 200
 	height: 64
@@ -42,8 +42,8 @@ ApplicationWindow {
 		text: pomo.timestring
 		font.pixelSize: 40
 		color: pomo.color
-		
-		SequentialAnimation on opacity {
+
+       	SequentialAnimation on opacity {
 			running : false
 			id : animateToBright
 			NumberAnimation{  to: 1.0; duration: 0}
@@ -78,7 +78,7 @@ ApplicationWindow {
 
 		}
 
-		
+
 	}
 
 	MouseArea {
