@@ -188,7 +188,7 @@ timekeeper = @async begin
                 freeze[] = true
                 windowcolor[] = "#EE000000"
                 color[] = "#EE000000"
-            elseif mytime()[2:3] == [0;0]
+            elseif mytime()[2:3] == [0;15]
                 for i in ("web", "projects/pomodoro", "dotfiles")
                     try
                     run(`pwsh /C cd /Users/Gal/home/$i` & `git add .` & `git commit -m \"hourly\" ` & `git push`; wait=true)
