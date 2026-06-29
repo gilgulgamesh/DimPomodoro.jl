@@ -167,9 +167,9 @@ version = "1.11.0"
 
 [[deps.QML]]
 deps = ["ColorTypes", "CxxWrap", "Libdl", "MacroTools", "Observables", "Qt6Svg_jll", "Qt6Wayland_jll", "jlqml_jll"]
-git-tree-sha1 = "e7d1cfd2a7ede46a8852b4688afe59488e2d8fed"
+git-tree-sha1 = "3d43284205ce8f25419dc3bec49d38d2a652fc73"
 uuid = "2db162a6-7e43-52c3-8d84-290c1c42d82a"
-version = "0.13.0"
+version = "0.13.2"
 
     [deps.QML.extensions]
     Qt65CompatExt = "Qt65Compat_jll"
@@ -189,9 +189,9 @@ version = "6.10.2+2"
 
 [[deps.Qt6Declarative_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Qt6Base_jll", "Qt6ShaderTools_jll", "Qt6Svg_jll"]
-git-tree-sha1 = "d5b7dd0e226774cbd87e2790e34def09245c7eab"
+git-tree-sha1 = "159d253ab126d5b29230cf53521899bea4ef4648"
 uuid = "629bc702-f1f5-5709-abd5-49b8460ea067"
-version = "6.10.2+1"
+version = "6.10.2+2"
 
 [[deps.Qt6ShaderTools_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Qt6Base_jll"]
@@ -380,9 +380,9 @@ version = "3.2.14+0"
 
 [[deps.jlqml_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Qt6Declarative_jll", "Qt6Svg_jll", "libcxxwrap_julia_jll"]
-git-tree-sha1 = "b7126e6350af5d2cf7b3e99c697ff5d08bae20eb"
+git-tree-sha1 = "f8f574c897de3cb335af313389263b9033ae418f"
 uuid = "6b5019fb-a83d-5b4e-a9f7-678a36c28df7"
-version = "0.10.2+0"
+version = "0.10.3+0"
 
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -391,9 +391,9 @@ version = "5.15.0+0"
 
 [[deps.libcxxwrap_julia_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "63f4a7f164d693aa284ba0e5bf7ce4676614e54d"
+git-tree-sha1 = "ded0ec008143feba86aceba3cecd27f5625db8d8"
 uuid = "3eaa8342-bff7-56a5-9981-c04077f7cee7"
-version = "0.14.10+0"
+version = "0.14.10+1"
 
 [[deps.libevdev_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
