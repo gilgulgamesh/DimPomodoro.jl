@@ -21,7 +21,7 @@ orange = "#fe8019"
 #vars
 qml_file = "pomodoro.qml"
 resttime = 2 * 60
-bigresttime = 60 * 60
+bigresttime = 10 * 60
 gotime = 15 * 60
 gocolor = orange
 restcolor = teal
@@ -76,6 +76,7 @@ on(freeze) do f
         width[] = 200
         height[] = 64
         windowcolor[] = "transparent"
+
     end
 end
 
@@ -113,10 +114,11 @@ on(inrest) do inr
         println("next break")
     else
         freeze[] = false
+        paused[] = false
         t[] = gotime
         color[] = gocolor
         global ncorner
-        ncorner = ncorner % 4 + 1 # looks odd, but after 1-indexing it's normal
+        ncorner = ncorner % 4 + 1
         tocorner!(ncorner)
         println("next pomo")
     end
@@ -144,7 +146,10 @@ end
 
 
 backtocorner() = tocorner!(ncorner)
-skip() = inrest[] = !inrest[]
+skip() = begin
+    inrest[] = !inrest[]
+    !inrest[] ? paused[] = false : nothing
+end
 playpause() = paused[] = !paused[]
 
 @qmlfunction println backtocorner skip playpause
@@ -164,6 +169,18 @@ timekeeper = @async begin
                 inrest[] = !inrest[] # triggers all other things
             end
             trunning = false
+            if mytime() == [17 0 0]
+                freeze[] = true
+                color[] = bigrestcolor
+                windowcolor[] = "#99000000"
+                t[]  = 17 * 60
+            elseif [0, 0, 1] < vec(mytime()) < [7, 0, 0]
+                paused[] = true
+                freeze[] = true
+                windowcolor[] = "#EE000000"
+                color[] = "#EE000000"
+
+            end
         end
         sleep(0.01)
     end
@@ -176,16 +193,6 @@ exec_async()
 mytime() = begin
     seconds = (time()÷1) % 60
     minutes = (time()÷60) % 60
-    hours = (time()÷(60*60)) % 12 + 1
+    hours = ((time()÷(60*60)) + 13) % 24
     return Int.([hours minutes seconds])
 end
-
-# if mytime()[1] == 5
-#     if mytime()[2] == 0
-#         freeze[] = true
-#     else
-#         if mytime()[2] == medlength
-#         freeze[] = false
-#         end
-#     end
-# end
