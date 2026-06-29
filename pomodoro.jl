@@ -155,6 +155,15 @@ playpause() = paused[] = !paused[]
 @qmlfunction println backtocorner skip playpause
 engine = loadqml(qml_file, pomo=JuliaPropertyMap( "width" => width, "height" => height, "windowcolor" => windowcolor, "color" => color, "x" => x, "y" => y, "timestring" => timestring, "visible" => visible, "paused" => paused, "inrest" => inrest, "freeze" => freeze, "opacity" => opacity, "font" => font, "fontsize" => fontsize))
 # QML.watchqml(engine, qml_file)
+#
+#
+function mytime()
+    seconds = (time()÷1) % 60
+    minutes = (time()÷60) % 60
+    hours = ((time()÷(60*60)) + 13) % 24
+    return Int.([hours, minutes, seconds])
+end
+
 
 trunning = false
 timekeeper = @async begin
@@ -169,17 +178,20 @@ timekeeper = @async begin
                 inrest[] = !inrest[] # triggers all other things
             end
             trunning = false
-            if mytime() == [17 0 0]
+            if mytime() == [17;0;0]
                 freeze[] = true
                 color[] = bigrestcolor
                 windowcolor[] = "#99000000"
                 t[]  = 17 * 60
-            elseif [0, 0, 1] < vec(mytime()) < [7, 0, 0]
+            elseif [0;0;1] < mytime() < [7;0;0]
                 paused[] = true
                 freeze[] = true
                 windowcolor[] = "#EE000000"
                 color[] = "#EE000000"
-
+            elseif mytime()[2:3] == [0;0]
+                for i in ("web", "projects/pomodoro", "dotfiles")
+                    run(`pwsh /C cd Users/Gal/home/$i` & `git add -u` & `git commit -m \"hourly commit $(string(permutedims(mytime()))) \" ` & `git push`; wait=true)
+                end
             end
         end
         sleep(0.01)
@@ -189,10 +201,3 @@ end
 
 
 exec_async()
-
-mytime() = begin
-    seconds = (time()÷1) % 60
-    minutes = (time()÷60) % 60
-    hours = ((time()÷(60*60)) + 13) % 24
-    return Int.([hours minutes seconds])
-end
