@@ -190,7 +190,10 @@ timekeeper = @async begin
                 color[] = "#EE000000"
             elseif mytime()[2:3] == [0;0]
                 for i in ("web", "projects/pomodoro", "dotfiles")
-                    run(`pwsh /C cd /Users/Gal/home/$i` & `git add -u` & `git commit -m "hourly" ` & `git push`; wait=true)
+                    try
+                    run(`pwsh /C cd /Users/Gal/home/$i` & `git add .` & `git commit -m \"hourly\" ` & `git push`; wait=true)
+                    catch
+                    end
                 end
             end
         end
