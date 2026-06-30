@@ -20,8 +20,8 @@ orange = "#fe8019"
 
 #vars
 qml_file = "pomodoro.qml"
-resttime = 2 * 60
-bigresttime = 10 * 60
+resttime = 80
+bigresttime = 5 * 60
 gotime = 15 * 60
 gocolor = orange
 restcolor = teal
@@ -41,8 +41,8 @@ ne = (right, top)
 sw = (left, bottom)
 se = (right, bottom)
 k = SCALING_FACTOR
-corners = (ne, se, sw, nw)
-# corners = (ne.÷k, se.÷k, sw.÷k, nw.
+# corners = (ne, se, sw, nw)
+corners = (ne.÷k, se.÷k, sw.÷k, nw.÷k)
 
 const timestring = Observable("Br:Ok:En")
 const visible = Observable(true)
@@ -57,8 +57,8 @@ const height = Observable(64)
 const windowcolor = Observable("transparent")
 const freeze = Observable(false)
 const opacity = Observable(0.75)
-const font = Observable("Meslo")
-const fontsize = Observable(26)
+const font = Observable("Meslo LG S")
+const fontsize = Observable(25)
 
 
 on(freeze) do f
