@@ -8,6 +8,7 @@ println("launching")
 using QML
 using Observables
 
+
 gray = "#d0c8aa"
 yellow = "#fabd2f"
 green = "#b8bb26"
@@ -57,8 +58,8 @@ const height = Observable(64)
 const windowcolor = Observable("transparent")
 const freeze = Observable(false)
 const opacity = Observable(0.75)
-const font = Observable("Meslo LG S")
-const fontsize = Observable(25)
+ font = "Meslo LG S")
+ fontsize = Observable(25)
 
 
 on(freeze) do f
@@ -164,6 +165,29 @@ function mytime()
     return Int.([hours, minutes, seconds])
 end
 
+medtime = 17
+function automate()
+    if mytime()[] == [17;00]
+        freeze[] = true
+        color[] = bigrestcolor
+        windowcolor[] = "#99000000"
+        global medtime
+        t[]  = medtime * 60
+    elseif [0;00] < mytime()[1:2] < [7;00]
+        paused[] = true
+        freeze[] = true
+        windowcolor[] = "#F2000000"
+        color[] = "#F2000000"
+    elseif mytime()[2:3] == [00;15]
+        for i in ("web", "projects/pomodoro", "dotfiles")
+            println(i)
+            try
+                run(`pwsh /C cd /Users/Gal/home/$i` & `git add .` & `git commit -m \"hourly\" ` & `git push`; wait=true)
+            catch
+            end
+        end
+    end
+end
 
 trunning = false
 timekeeper = @async begin
@@ -178,25 +202,9 @@ timekeeper = @async begin
                 inrest[] = !inrest[] # triggers all other things
             end
             trunning = false
-            if mytime() == [17;0;0]
-                freeze[] = true
-                color[] = bigrestcolor
-                windowcolor[] = "#99000000"
-                t[]  = 17 * 60
-            elseif [0;0;1] < mytime() < [7;0;0]
-                paused[] = true
-                freeze[] = true
-                windowcolor[] = "#EE000000"
-                color[] = "#EE000000"
-            elseif mytime()[2:3] == [0;15]
-                for i in ("web", "projects/pomodoro", "dotfiles")
-                    try
-                    run(`pwsh /C cd /Users/Gal/home/$i` & `git add .` & `git commit -m \"hourly\" ` & `git push`; wait=true)
-                    catch
-                    end
-                end
-            end
         end
+        if mytime()[3] == [00]
+            automate()
         sleep(0.01)
     end
 end
