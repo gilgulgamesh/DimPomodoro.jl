@@ -39,6 +39,7 @@ ApplicationWindow {
 		opacity: pomo.opacity
 		id:text
 		anchors.centerIn: parent
+	//	wrapMode: Text.WordWrap
 		text: pomo.timestring
 		font.pointSize: pomo.fontsize
 		font.family: pomo.font
@@ -86,7 +87,7 @@ ApplicationWindow {
 		anchors.fill: parent
 		acceptedButtons: Qt.RightButton | Qt.MiddleButton | Qt.LeftButton
 		onPressed: mouse => {
-			if (mouse.button === Qt.LeftButton && !pomo.freeze) {
+			if (mouse.button === Qt.LeftButton && !pomo.frozen) {
 				window.startSystemMove() ;
 				pomo.x = window.x;pomo.y = window.y
 			} else {
@@ -107,7 +108,7 @@ ApplicationWindow {
 				// }
 				Julia.playpause()
 			}
-			if (mouse.button === Qt.MiddleButton && !pomo.freeze) {
+			if (mouse.button === Qt.MiddleButton && !pomo.frozen) {
 				// animateFromBright.start()
 				Julia.backtocorner()
 			}

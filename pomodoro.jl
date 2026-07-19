@@ -1,12 +1,8 @@
 println("launching")
 
-# artifact_bin = joinpath(first(filter(d -> isdir(joinpath(d, "qml", "Qt", "labs", "platform")),
-#         readdir(joinpath(first(Base.DEPOT_PATH), "artifacts"), join=true))), "bin")
-# sep = Sys.iswindows() ? ";" : ":"
-# ENV["PATH"] = artifact_bin * sep * ENV["PATH"]
-
 using QML
 using Observables
+using Dates
 
 
 gray = "#d0c8aa"
@@ -21,15 +17,15 @@ orange = "#fe8019"
 
 #vars
 qml_file = "pomodoro.qml"
-resttime = 80
-bigresttime = 5 * 60
-gotime = 15 * 60
-gocolor = orange
+resttime = 1
+bigresttime = 3
+gotime = 60
+gocolor = yellow
 restcolor = teal
 bigrestcolor = purple
 ncorner = 1
 margin = 10
-SCALING_FACTOR = 1 #set this to your ui scaling factor, or just play with it
+scale = 1 ##UI scaling factor, input what yours is as this is REVERSED
 
 
 #corners!
@@ -41,92 +37,104 @@ nw = (left, top)
 ne = (right, top)
 sw = (left, bottom)
 se = (right, bottom)
-k = SCALING_FACTOR
-# corners = (ne, se, sw, nw)
-corners = (ne.÷k, se.÷k, sw.÷k, nw.÷k)
+corners = (ne.÷scale, se.÷scale, sw.÷scale, nw.÷scale)
+
 
 const timestring = Observable("Br:Ok:En")
 const visible = Observable(true)
 const x = Observable(right)
 const y = Observable(top)
-const t = Observable(gotime)
+const t = Observable(gotime * 60)
 const color = Observable(gocolor)
 const inrest = Observable(false)
-const paused = Observable(false)
+const paused = Observable(true)
 const width = Observable(200)
 const height = Observable(64)
-const windowcolor = Observable("transparent")
-const freeze = Observable(false)
+const windowcolor = Observable("black")
+const frozen = Observable(false)
 const opacity = Observable(0.75)
- font = "Meslo LG S")
- fontsize = Observable(25)
+const font = Observable("Meslo LG S")
+const fontsize = Observable(18)
+
+daycount() = Dates.today() - Date("2026-07-15") |> string |> split |> first .|> (x -> parse(Int, x))
+
+medtime() = daycount() + 17
 
 
-on(freeze) do f
+function tocorner(n)
+    rand1 = trunc(Int, 40rand())
+    rand2 = trunc(Int, 40rand())
+    (x[], y[]) = corners[n] .+ (rand1, rand2)
+end
+
+on(frozen) do f
     if f
         rand1 = trunc(Int, 200rand())
         rand2 = trunc(Int, 200rand())
         x[] = y[] = 0
         width[] = 1920 + rand1
         height[] = 1080 + rand2
-        windowcolor[] = "#99000000"
         opacity[] = 0.5
     else
         backtocorner()
         opacity[] = 0.75
-        width[] = 200
-        height[] = 64
-        windowcolor[] = "transparent"
+        width[] = 50
+        height[] = 50
+        # windowcolor[] = "transparent"
 
     end
 end
 
-function tocorner!(n)
-    rand1 = trunc(Int, 40rand())
-    rand2 = trunc(Int, 40rand())
-    (x[], y[]) = corners[n] .+ (rand1, rand2)
-end
+
 
 on(paused) do p
     if p
-        freeze[] = true
+        frozen[] = true
         visible[] = true
-    else
-        if !inrest[]
-            freeze[] = false
+        # windowcolor[] = "#FF000000"
+        global frozen
+        if frozen[]
+            # windowcolor[] = "#FF000000"
+        else
+            # windowcolor[] = "#99000000"
         end
-        t[] = t[] - 1
+    else
+        Threads.@spawn tick()
+        if !inrest[]
+            frozen[] = false
+        end
     end
-
+    # println(p)
 end
 
 on(inrest) do inr
     if inr
-        freeze[] = true
+        frozen[] = true
         if ncorner == 4
-            t[] = bigresttime
-            color[] = bigrestcolor
+            t[] = bigresttime * 60
+            color[] = white
+            # sleep(1)
+            timestring[] = daochap(daycount()-2) * formattime(t[])
+            paused[] = true
         else
-            t[] = resttime
+            t[] = resttime * 60
             color[] = restcolor
-
+            paused[] = true
+            timestring[] = formattime(t[])
         end
         # paused[] = true
         println("next break")
     else
-        freeze[] = false
-        paused[] = false
-        t[] = gotime
+
+        t[] = gotime * 60
         color[] = gocolor
         global ncorner
         ncorner = ncorner % 4 + 1
-        tocorner!(ncorner)
+        tocorner(ncorner)
         println("next pomo")
+        paused[] = true
+        timestring[] = formattime(t[])
     end
-    paused[] = true
-
-    timestring[] = formattime(t[])
-
 end
 
 #time!
@@ -135,80 +143,127 @@ function formattime(timen)
     sec = timen % 60
     min = timen ÷ 60
     if min < 10
-        min = string(0, min)
+        min = string(min)
     end
     if sec < 10
         sec = string(0, sec)
     end
-    string(min, ":", sec)
+    if min == "0"
+        string(":", sec)
+    else
+        string(min)
+    end
 end
 
 
 
 
-backtocorner() = tocorner!(ncorner)
+backtocorner() = tocorner(ncorner)
 skip() = begin
     inrest[] = !inrest[]
     !inrest[] ? paused[] = false : nothing
 end
-playpause() = paused[] = !paused[]
+playpause() = begin
+    paused[] = !paused[]
+    if !paused[]
+    end
+end
+
 
 @qmlfunction println backtocorner skip playpause
-engine = loadqml(qml_file, pomo=JuliaPropertyMap( "width" => width, "height" => height, "windowcolor" => windowcolor, "color" => color, "x" => x, "y" => y, "timestring" => timestring, "visible" => visible, "paused" => paused, "inrest" => inrest, "freeze" => freeze, "opacity" => opacity, "font" => font, "fontsize" => fontsize))
+engine = loadqml(qml_file, pomo=JuliaPropertyMap( "width" => width, "height" => height, "windowcolor" => windowcolor, "color" => color, "x" => x, "y" => y, "timestring" => timestring, "visible" => visible, "paused" => paused, "inrest" => inrest, "frozen" => frozen, "opacity" => opacity, "font" => font, "fontsize" => fontsize))
 # QML.watchqml(engine, qml_file)
-#
-#
+
+
 function mytime()
-    seconds = (time()÷1) % 60
+    # seconds = (time()÷1) % 60
     minutes = (time()÷60) % 60
     hours = ((time()÷(60*60)) + 13) % 24
-    return Int.([hours, minutes, seconds])
+    return Int.([hours, minutes]) #, seconds])
 end
 
-medtime = 17
-function automate()
-    if mytime()[] == [17;00]
-        freeze[] = true
-        color[] = bigrestcolor
-        windowcolor[] = "#99000000"
-        global medtime
-        t[]  = medtime * 60
-    elseif [0;00] < mytime()[1:2] < [7;00]
-        paused[] = true
-        freeze[] = true
-        windowcolor[] = "#F2000000"
-        color[] = "#F2000000"
-    elseif mytime()[2:3] == [00;15]
-        for i in ("web", "projects/pomodoro", "dotfiles")
-            println(i)
-            try
-                run(`pwsh /C cd /Users/Gal/home/$i` & `git add .` & `git commit -m \"hourly\" ` & `git push`; wait=true)
-            catch
-            end
-        end
-    end
-end
 
-trunning = false
-timekeeper = @async begin
-    while true
-        @async while !paused[] && !trunning
-            global trunning
-            trunning = true
+
+ticking = false
+function tick()
+    global ticking
+    if !paused[] && !ticking
+        ticking = true
+        t[] = t[]-1
+        if inrest[]
+            font[] = "Verdana"
+            timestring[] = daochap(daycount()-2) * formattime(t[])
+        else
+            font[] = "Meslo LG S"
             timestring[] = formattime(t[])
-            t[] -= 1
-            sleep(1)
-            if t[] ≤ 0
-                inrest[] = !inrest[] # triggers all other things
-            end
-            trunning = false
         end
-        if mytime()[3] == [00]
-            automate()
-        sleep(0.01)
+        sleep(1)
+        if t[] ≤ 0
+            inrest[] = !inrest[] # triggers all other things... except ticking now
+        end
+        ticking = false
+        tick()
     end
+end
+
+function automate()
+    while true
+        global scrflag
+        if isfile(scrflag)
+            rm(scrflag)
+            frozen[] = true
+            !inrest[] ? paused[] = true : nothing
+        end
+        if mytime() == [17;21]
+            ncorner = 4
+            inrest[] = true
+            t[] = medtime() * 60
+            paused[] = false
+        end
+       if ([00;00] < mytime() < [07;00]) || (mytime() > [23;59 - daycount()])
+            if !paused[]
+                paused[] = true
+                frozen[] = true
+                windowcolor[] = "#FF000000"
+                timestring[] = daochap(daycount()-2)
+                inrest[]
+                fontsize[] = 20
+                color[] = white
+                sleep(15*60)
+                color[] = "black"
+                fontsize[] = 25
+
+
+            end
+
+        end
+        sleep(1)
+    end
+end
+
+function daochap(n)
+    n = (n-1)%81 + 1
+    book = read("C:/Users/Gal/Calibre Library/Wu, Charles Q.; Wu, Charles Q.; Wu,/Thus Spoke Laozi (9)/Thus Spoke Laozi - Wu, Charles Q.; Wu, Charles Q.;.txt", String);
+    r = Regex("($n" * raw"\r\n\r\n(.|\n){10,1600}?" * "(?=COMMENTARY))")
+    raw = match(r, book).captures[1]
+    english = replace(raw, r"\n?[^A-z,?:.;—\n]+(?=(\W+\p{Lu}))" => "\n", "\r" => "")
+    rightlines = replace(english, r"\n\n\n+" => "\n\n")
 end
 
 
 
+scrflag = joinpath(homedir(), ".dimpomodoro", "screensaver.flag")
+isfile(scrflag) ?  rm(scrflag) : nothing
+Threads.@spawn automate()
+paused[] = false
 exec_async()
+
+
+# elseif mytime()[2:3] == [00;15]
+#     for i in ("web", "projects/pomodoro", "dotfiles")
+#         println(i)
+#         # try
+#         #     run(`pwsh /C cd /Users/Gal/home/$i` & `git add .` & `git commit -m \"hourly\" ` & `git push`; wait=true)
+#         # catch
+#         # end
+#     end
