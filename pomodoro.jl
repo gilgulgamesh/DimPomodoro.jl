@@ -1,9 +1,11 @@
 println("launching")
-
+starttime = time()
 using QML
+println(time()-starttime)
 using Observables
-using Dates
+println(time()-starttime)
 
+using Dates
 
 gray = "#d0c8aa"
 yellow = "#fabd2f"
@@ -26,7 +28,6 @@ bigrestcolor = purple
 ncorner = 1
 margin = 10
 scale = 1 ##UI scaling factor, input what yours is as this is REVERSED
-
 
 #corners!
 left = margin
@@ -55,11 +56,11 @@ const frozen = Observable(false)
 const opacity = Observable(0.75)
 const font = Observable("Meslo LG S")
 const fontsize = Observable(18)
+println(time()-starttime)
 
 daycount() = Dates.today() - Date("2026-07-15") |> string |> split |> first .|> (x -> parse(Int, x))
 
 medtime() = daycount() + 17
-
 
 function tocorner(n)
     rand1 = trunc(Int, 40rand())
@@ -85,8 +86,6 @@ on(frozen) do f
     end
 end
 
-
-
 on(paused) do p
     if p
         frozen[] = true
@@ -98,10 +97,13 @@ on(paused) do p
         else
             # windowcolor[] = "#99000000"
         end
+
     else
         Threads.@spawn tick()
         if !inrest[]
             frozen[] = false
+        else
+
         end
     end
     # println(p)
@@ -112,20 +114,17 @@ on(inrest) do inr
         frozen[] = true
         if ncorner == 4
             t[] = bigresttime * 60
-            color[] = white
+            color[] = purple
             # sleep(1)
-            timestring[] = daochap(daycount()-2) * formattime(t[])
             paused[] = true
         else
             t[] = resttime * 60
             color[] = restcolor
             paused[] = true
-            timestring[] = formattime(t[])
         end
         # paused[] = true
         println("next break")
     else
-
         t[] = gotime * 60
         color[] = gocolor
         global ncorner
@@ -136,8 +135,6 @@ on(inrest) do inr
         timestring[] = formattime(t[])
     end
 end
-
-#time!
 
 function formattime(timen)
     sec = timen % 60
@@ -155,9 +152,7 @@ function formattime(timen)
     end
 end
 
-
-
-
+#QML
 backtocorner() = tocorner(ncorner)
 skip() = begin
     inrest[] = !inrest[]
@@ -168,21 +163,18 @@ playpause() = begin
     if !paused[]
     end
 end
-
-
+println(time()-starttime)
 @qmlfunction println backtocorner skip playpause
 engine = loadqml(qml_file, pomo=JuliaPropertyMap( "width" => width, "height" => height, "windowcolor" => windowcolor, "color" => color, "x" => x, "y" => y, "timestring" => timestring, "visible" => visible, "paused" => paused, "inrest" => inrest, "frozen" => frozen, "opacity" => opacity, "font" => font, "fontsize" => fontsize))
 # QML.watchqml(engine, qml_file)
 
-
+#time
 function mytime()
     # seconds = (time()÷1) % 60
     minutes = (time()÷60) % 60
     hours = ((time()÷(60*60)) + 13) % 24
     return Int.([hours, minutes]) #, seconds])
 end
-
-
 
 ticking = false
 function tick()
@@ -206,36 +198,35 @@ function tick()
     end
 end
 
+meditated = false
 function automate()
     while true
-        global scrflag
+        global scrflag, meditated
         if isfile(scrflag)
             rm(scrflag)
             frozen[] = true
             !inrest[] ? paused[] = true : nothing
         end
-        if mytime() == [17;21]
-            ncorner = 4
-            inrest[] = true
-            t[] = medtime() * 60
-            paused[] = false
-        end
-       if ([00;00] < mytime() < [07;00]) || (mytime() > [23;59 - daycount()])
-            if !paused[]
-                paused[] = true
-                frozen[] = true
-                windowcolor[] = "#FF000000"
-                timestring[] = daochap(daycount()-2)
-                inrest[]
-                fontsize[] = 20
-                color[] = white
-                sleep(15*60)
-                color[] = "black"
-                fontsize[] = 25
-
-
+        mytime() < [17;00] ? meditated = false : nothing
+        if mytime() > [17;00] && meditated == false
+            if !inrest[]
+                ncorner = 4
+                inrest[] = true
+                t[] = medtime() * 60
+            elseif t[] < 1
+                meditated = true
             end
-
+        end
+        if [00;00] < mytime() < [07;00] || mytime() > [23;59 - daycount()]
+            paused[] = false
+            color[] = white
+            if !inrest[]
+                inrest[] = true
+                t[] = 15*60
+            elseif t[] < 61 && paused[] == false
+                paused[] = true
+                color[] = "black"
+            end
         end
         sleep(1)
     end
@@ -250,14 +241,13 @@ function daochap(n)
     rightlines = replace(english, r"\n\n\n+" => "\n\n")
 end
 
-
-
 scrflag = joinpath(homedir(), ".dimpomodoro", "screensaver.flag")
 isfile(scrflag) ?  rm(scrflag) : nothing
 Threads.@spawn automate()
 paused[] = false
 exec_async()
 
+println(time()-starttime)
 
 # elseif mytime()[2:3] == [00;15]
 #     for i in ("web", "projects/pomodoro", "dotfiles")
